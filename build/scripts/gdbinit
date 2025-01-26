@@ -1,0 +1,4 @@
+set disassemble-next-line on
+b __text_start
+target remote : 1234
+c
