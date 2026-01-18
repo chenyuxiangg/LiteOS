@@ -1648,6 +1648,10 @@ UINT32 OsMemFree(VOID *pool, const VOID *ptr)
 
         node = (LosMemDynNode *)((UINTPTR)ptr - OS_MEM_NODE_HEAD_SIZE);
 
+        if ((OS_MEM_NODE_GET_USED_FLAG(node->selfNode.sizeAndFlag) & OS_MEM_NODE_USED_FLAG) == 0) {
+            LOS_Panic("double free.\n");
+        }
+
         if (OS_MEM_NODE_GET_ALIGNED_FLAG(gapSize)) {
             gapSize = OS_MEM_NODE_GET_ALIGNED_GAPSIZE(gapSize);
             if ((gapSize & (OS_MEM_ALIGN_SIZE - 1)) || (gapSize > ((UINTPTR)ptr - OS_MEM_NODE_HEAD_SIZE))) {

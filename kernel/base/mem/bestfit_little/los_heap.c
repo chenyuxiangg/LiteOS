@@ -356,8 +356,13 @@ BOOL OsHeapFree(VOID *pool, const VOID *ptr)
     }
 
     node = ((struct LosHeapNode *)ptr) - 1;
+
+    if (node->used == 0) {
+        LOS_Panic("double free.\n");
+    }
+
     /* check if the address is a node of the heap memory list */
-    if ((node->used == 0) || (!((UINTPTR)node == (UINTPTR)heapMan->head) &&
+    if ((!((UINTPTR)node == (UINTPTR)heapMan->head) &&
         (((UINTPTR)node->prev < (UINTPTR)heapMan->head) ||
         ((UINTPTR)node->prev > ((UINTPTR)heapMan->tail + sizeof(struct LosHeapNode))) ||
         ((UINTPTR)OsHeapPrvGetNext(heapMan, node->prev) != (UINTPTR)node)))) {
